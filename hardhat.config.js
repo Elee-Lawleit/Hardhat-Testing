@@ -1,13 +1,16 @@
-require("@nomicfoundation/hardhat-toolbox");
-require("dotenv").config({ path: __dirname + '/.env' })
+require("@nomicfoundation/hardhat-toolbox")
+require("dotenv").config({ path: __dirname + "/.env" })
 require("@nomiclabs/hardhat-etherscan")
-require("./tasks/block-number");
+require("./tasks/block-number")
+require("hardhat-gas-reporter")
+require("solidity-coverage")
 
 /** @type import('hardhat/config').HardhatUserConfig */
 
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL
 const ETHEREUM_ACCOUNT_PRIVATE_KEY = process.env.ETHEREUM_ACCOUNT_PRIVATE_KEY
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 
 module.exports = {
     defaultNetwork: "hardhat",
@@ -23,6 +26,14 @@ module.exports = {
             accounts: [ETHEREUM_ACCOUNT_PRIVATE_KEY],
             chainId: 11155111,
         },
+        //this is different from the fake hardhat network, the fake network only lives until the execution of the script is complete
+        //this still uses the hardhat network, but is sort of the same as ganache
+        //this one gets reset AFTER it gets ctrled + c
+        localhost: {
+            url: "http://127.0.0.1:8545/",
+            // accounts: [don't need to give any account here, hardhat automatically gets them]
+            chainId: 31337,
+        },
     },
     solidity: "0.8.7",
 
@@ -31,5 +42,17 @@ module.exports = {
     //plugins are added as tasks that can be run using "yarn hardhat [task_name]"
     etherscan: {
         apiKey: ETHERSCAN_API_KEY,
+    },
+    //to see how much gas each of our functions cost
+    //is automatically run after we run tests
+    gasReporter: {
+        enabled: true,
+        //to output to a text file
+        outputFile: "gas-report.txt",
+        noColors: true,
+        currency: "PKR",
+        coinmarketcap: COINMARKETCAP_API_KEY,
+        //to see info for different blockchains, MATIC is for polygon
+        token: "MATIC",
     },
 }

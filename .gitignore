@@ -4,6 +4,9 @@ coverage
 coverage.json
 typechain
 typechain-types
+coverage
+coverage.json
+yarn-error.log
 
 # Hardhat files
 cache
